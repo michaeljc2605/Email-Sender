@@ -1,0 +1,127 @@
+import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from flask import Flask, render_template, request, session, redirect, url_for
+import pandas as pd
+from io import BytesIO
+import base64
+
+app = Flask(__name__)
+app.secret_key = 'super_secret_key'  # Replace this with a secure random string!
+
+# Function to encode image to base64
+def encode_image(image_path):
+    absolute_image_path = os.path.join(app.root_path, 'static', 'images', image_path)
+    if not os.path.exists(absolute_image_path):
+        raise FileNotFoundError(f"Image file not found at {absolute_image_path}")
+    with open(absolute_image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode('utf-8')
+
+# Function to send the email
+def send_email(recipient_email, subject, body):
+    try:
+        sender_email = "michaeljosephcandra@gmail.com"
+        sender_password = "ndey kkel fktf vfdd"  # Use App Password, not real password!
+
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'html'))
+
+        image_base64 = encode_image('A4C Logo.png')
+        image_data = base64.b64decode(image_base64)
+        image_attachment = MIMEImage(image_data, name="logo.png")
+        msg.attach(image_attachment)
+
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
+        print(f"Email sent to {recipient_email}")
+    except Exception as e:
+        print(f"Error sending email to {recipient_email}: {str(e)}")
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    table_html = None
+    paragraphs = []
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'No file part'
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+        if file and (file.filename.endswith('.xlsx') or file.filename.endswith('.xls')):
+            try:
+                in_memory_file = BytesIO(file.read())
+                df = pd.read_excel(in_memory_file)
+
+                required_columns = ['company name', 'email address', 'page link', 'broken link', 'fixed link']
+                if not all(col in df.columns for col in required_columns):
+                    return f"Missing required columns: {', '.join(required_columns)}"
+
+                session['excel_data'] = df.to_json()  # store dataframe in session
+
+                table_html = df.to_html(classes='table table-striped', index=False)
+                image_base64 = encode_image('A4C Logo.png')
+
+                for _, row in df.iterrows():
+                    paragraph = (
+                        f"Dear <b>{row['company name']}</b>,<br><br>"
+                        f"I hope this message finds you well.<br><br>"
+                        f"While reviewing your website at \"<a href='{row['page link']}'>{row['page link']}</a>\", we identified a broken hyperlink "
+                        f"currently pointing to \"<a href='{row['broken link']}'>{row['broken link']}</a>\". To enhance user experience and "
+                        f"maintain optimal website performance, we recommend replacing it with an updated resource: "
+                        f"\"<a href='{row['fixed link']}'>{row['fixed link']}</a>\".<br><br>"
+                        f"Should you require any assistance in addressing this issue or implementing the update, our team at "
+                        f"<b>ApplyforChina</b> would be happy to support you. Please feel free to reach out to us for further guidance or collaboration.<br><br>"
+                        f"Best regards,<br>"
+                        f"<i>Michael Joseph Candra</i><br>"
+                        f"<i>ApplyforChina</i><br><br>"
+                        f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
+                    )
+                    paragraphs.append(paragraph)
+            except Exception as e:
+                return f'Error reading Excel file: {str(e)}'
+        else:
+            return 'Invalid file type. Please upload an Excel file.'
+    return render_template('index.html', table_html=table_html, paragraphs=paragraphs)
+
+@app.route('/send_email', methods=['POST'])
+def send_bulk_email():
+    try:
+        if 'excel_data' not in session:
+            return 'No email data available. Please upload the Excel file again.'
+
+        df = pd.read_json(session['excel_data'])
+        image_base64 = encode_image('A4C Logo.png')
+
+        for _, row in df.iterrows():
+            company_name = row['company name']
+            recipient_email = row['email address']
+            subject = f"Broken Link Notification for {company_name}"
+            body = (
+                f"Dear <b>{company_name}</b>,<br><br>"
+                f"I hope this message finds you well.<br><br>"
+                f"While reviewing your website at \"<a href='{row['page link']}'>{row['page link']}</a>\", we identified a broken hyperlink "
+                f"currently pointing to \"<a href='{row['broken link']}'>{row['broken link']}</a>\". To enhance user experience and "
+                f"maintain optimal website performance, we recommend replacing it with an updated resource: "
+                f"\"<a href='{row['fixed link']}'>{row['fixed link']}</a>\".<br><br>"
+                f"Should you require any assistance in addressing this issue or implementing the update, our team at "
+                f"<b>ApplyforChina</b> would be happy to support you. Please feel free to reach out to us for further guidance or collaboration.<br><br>"
+                f"Best regards,<br>"
+                f"<i>Michael Joseph Candra</i><br>"
+                f"<i>ApplyforChina</i><br><br>"
+                f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
+            )
+            send_email(recipient_email, subject, body)
+
+        return redirect(url_for('home'))
+    except Exception as e:
+        return f'Error sending emails: {str(e)}'
+
+if __name__ == '__main__':
+    app.run(debug=True)
