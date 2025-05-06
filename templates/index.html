@@ -6,10 +6,26 @@
 </head>
 <body class="container mt-5">
     <h1>Upload Excel File</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" class="form-control mb-3">
-        <button type="submit" class="btn btn-success">Upload</button>
-    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="notification {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="p-4 shadow rounded bg-white" style="max-width: 600px">
+    <div class="mb-3">
+        <label for="password" class="form-label">Enter Password:</label>
+        <input type="password" id="password" name="password" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <input type="file" name="file" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Upload Excel</button>
+</form>
+
+
 
     {% if table_html %}
         <h2 class="mt-5">Uploaded Data</h2>
@@ -24,5 +40,6 @@
             <button type="submit" class="btn btn-primary">Send Bulk Emails</button>
         </form>
     {% endif %}
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
 </html>

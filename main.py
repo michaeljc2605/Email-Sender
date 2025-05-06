@@ -3,13 +3,13 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 import pandas as pd
 from io import BytesIO
 import base64
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key'  # Replace this with a secure random string!
+app.secret_key = 'hello123'  # Replace this with a secure random string!
 
 # Function to encode image to base64
 def encode_image(image_path):
@@ -48,12 +48,26 @@ def send_email(recipient_email, subject, body):
 def home():
     table_html = None
     paragraphs = []
+    password = "ApplyForChina68"
+
     if request.method == 'POST':
+        entered_password = request.form.get('password')
+
+        if entered_password != password:
+            flash('Incorrect password. Please try again.', 'error')
+            return redirect(url_for('home'))
+
+        flash('Password is correct!', 'success')
+
         if 'file' not in request.files:
-            return 'No file part'
+            flash('No file part', 'error')
+            return redirect(url_for('home'))
+
         file = request.files['file']
         if file.filename == '':
-            return 'No selected file'
+            flash('No selected file', 'error')
+            return redirect(url_for('home'))
+
         if file and (file.filename.endswith('.xlsx') or file.filename.endswith('.xls')):
             try:
                 in_memory_file = BytesIO(file.read())
@@ -61,11 +75,12 @@ def home():
 
                 required_columns = ['company name', 'email address', 'page link', 'broken link', 'fixed link']
                 if not all(col in df.columns for col in required_columns):
-                    return f"Missing required columns: {', '.join(required_columns)}"
-
-                session['excel_data'] = df.to_json()  # store dataframe in session
+                    flash(f"Missing required columns: {', '.join(required_columns)}", 'error')
+                    return redirect(url_for('home'))
 
                 table_html = df.to_html(classes='table table-striped', index=False)
+                paragraphs = []
+
                 image_base64 = encode_image('A4C Logo.png')
 
                 for _, row in df.iterrows():
@@ -84,11 +99,16 @@ def home():
                         f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
                     )
                     paragraphs.append(paragraph)
+
             except Exception as e:
-                return f'Error reading Excel file: {str(e)}'
+                flash(f'Error reading Excel file: {str(e)}', 'error')
+                return redirect(url_for('home'))
         else:
-            return 'Invalid file type. Please upload an Excel file.'
+            flash('Invalid file type. Please upload an Excel file.', 'error')
+            return redirect(url_for('home'))
+
     return render_template('index.html', table_html=table_html, paragraphs=paragraphs)
+
 
 @app.route('/send_email', methods=['POST'])
 def send_bulk_email():
