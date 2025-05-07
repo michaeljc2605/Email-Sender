@@ -7,9 +7,12 @@ from flask import Flask, render_template, request, session, redirect, url_for, f
 import pandas as pd
 from io import BytesIO
 import base64
+import json  # for JSON dump
 
 app = Flask(__name__)
-app.secret_key = 'hello123'  # Replace this with a secure random string!
+app.secret_key = 'hello123'  # Replace with a secure random string!
+app.permanent_session_lifetime = 3600  # session lasts 1 hour
+
 
 # Function to encode image to base64
 def encode_image(image_path):
@@ -18,6 +21,7 @@ def encode_image(image_path):
         raise FileNotFoundError(f"Image file not found at {absolute_image_path}")
     with open(absolute_image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
+
 
 # Function to send the email
 def send_email(recipient_email, subject, body):
@@ -43,6 +47,7 @@ def send_email(recipient_email, subject, body):
         print(f"Email sent to {recipient_email}")
     except Exception as e:
         print(f"Error sending email to {recipient_email}: {str(e)}")
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -100,6 +105,10 @@ def home():
                     )
                     paragraphs.append(paragraph)
 
+                # ✅ Store DataFrame as JSON in session
+                session.permanent = True
+                session['excel_data'] = df.to_json(orient='records')  # Save as JSON string
+
             except Exception as e:
                 flash(f'Error reading Excel file: {str(e)}', 'error')
                 return redirect(url_for('home'))
@@ -114,9 +123,12 @@ def home():
 def send_bulk_email():
     try:
         if 'excel_data' not in session:
-            return 'No email data available. Please upload the Excel file again.'
+            flash('No email data available. Please upload the Excel file again.', 'error')
+            return redirect(url_for('home'))
 
-        df = pd.read_json(session['excel_data'])
+        data_json = session['excel_data']
+        df = pd.read_json(data_json)
+
         image_base64 = encode_image('A4C Logo.png')
 
         for _, row in df.iterrows():
@@ -139,9 +151,12 @@ def send_bulk_email():
             )
             send_email(recipient_email, subject, body)
 
+        flash('Bulk emails have been sent successfully!', 'success')
         return redirect(url_for('home'))
     except Exception as e:
-        return f'Error sending emails: {str(e)}'
+        flash(f'Error sending emails: {str(e)}', 'error')
+        return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
