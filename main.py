@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.secret_key = 'hello123'  # Replace with a secure random string!
 app.permanent_session_lifetime = 3600  # session lasts 1 hour
 
+
 @app.route('/clear_session', methods=['POST'])
 def clear_session():
     # Clear the same specific session data as in send_bulk_email
@@ -38,6 +39,7 @@ def send_email(recipient_email, subject, body):
         sender_email = "michaeljosephcandra@gmail.com"
         sender_password = "ndey kkel fktf vfdd"
 
+
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = recipient_email
@@ -58,6 +60,7 @@ def send_email(recipient_email, subject, body):
             server.sendmail(sender_email, recipient_email, msg.as_string())
         print(f"Email sent to {recipient_email}")
 
+
     except Exception as e:
         print(f"Error sending email to {recipient_email}: {str(e)}")
 
@@ -67,7 +70,6 @@ def home():
     table_html = None
     paragraphs = []
     password = "ApplyForChina68"
-
     # Get selected template from query parameter or default to 'broken_link'
     selected_template = request.args.get('template', 'broken_link')
     session['selected_template'] = selected_template  # store in session
@@ -103,6 +105,31 @@ def home():
                 # Save data to session
                 session.permanent = True
                 session['excel_data'] = df.to_json(orient='records')
+                table_html = df.to_html(classes='table table-striped', index=False)
+                paragraphs = []
+
+                image_base64 = encode_image('A4C Logo.png')
+
+                for _, row in df.iterrows():
+                    paragraph = (
+                        f"Dear <b>{row['company name']}</b>,<br><br>"
+                        f"I hope this message finds you well.<br><br>"
+                        f"While reviewing your website at \"<a href='{row['page link']}'>{row['page link']}</a>\", we identified a broken hyperlink "
+                        f"currently pointing to \"<a href='{row['broken link']}'>{row['broken link']}</a>\". To enhance user experience and "
+                        f"maintain optimal website performance, we recommend replacing it with an updated resource: "
+                        f"\"<a href='{row['fixed link']}'>{row['fixed link']}</a>\".<br><br>"
+                        f"Should you require any assistance in addressing this issue or implementing the update, our team at "
+                        f"<b>ApplyforChina</b> would be happy to support you. Please feel free to reach out to us for further guidance or collaboration.<br><br>"
+                        f"Best regards,<br>"
+                        f"<i>Michael Joseph Candra</i><br>"
+                        f"<i>ApplyforChina</i><br><br>"
+                        f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
+                    )
+                    paragraphs.append(paragraph)
+
+                # ✅ Store DataFrame as JSON in session
+                session.permanent = True
+                session['excel_data'] = df.to_json(orient='records')  # Save as JSON string
 
             except Exception as e:
                 flash(f'Error reading Excel file: {str(e)}', 'error')
@@ -110,6 +137,7 @@ def home():
         else:
             flash('Invalid file type. Please upload an Excel file.', 'error')
             return redirect(url_for('home'))
+
 
     # ✅ Now: check if session['excel_data'] exists, even in GET
     if 'excel_data' in session:
@@ -151,6 +179,7 @@ def home():
             paragraphs.append(paragraph)
 
     return render_template('index.html', table_html=table_html, paragraphs=paragraphs, selected_template=selected_template)
+
 
 
 @app.route('/send_email', methods=['POST'])
@@ -211,7 +240,6 @@ def send_bulk_email():
     except Exception as e:
         flash(f'Error sending emails: {str(e)}', 'error')
         return redirect(url_for('home'))
-
 
 
 if __name__ == '__main__':

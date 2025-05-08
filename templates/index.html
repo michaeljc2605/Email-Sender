@@ -26,22 +26,15 @@
     </form>
     <!--hidden form -->
     <form id="clearSessionForm" action="{{ url_for('clear_session') }}" method="POST" style="display: none;"></form>
-
-
-
-
     {% if table_html %}
         <h2 class="mt-5">Uploaded Data</h2>
         <div>{{ table_html|safe }}</div>
-
 
     <div class="mb-4">
         <h5>Select Email Template:</h5>
         <a href="{{ url_for('home', template='broken_link') }}" class="btn btn-outline-primary {% if selected_template == 'broken_link' %}active{% endif %}">Broken Link</a>
         <a href="{{ url_for('home', template='partnership') }}" class="btn btn-outline-secondary {% if selected_template == 'partnership' %}active{% endif %}">Partnership</a>
     </div>
-
-
         <h2 class="mt-4">Email Previews</h2>
         {% for paragraph in paragraphs %}
             <div class="border p-3 mb-3">{{ paragraph|safe }}</div>
@@ -51,7 +44,6 @@
             <button type="submit" class="btn btn-primary">Send Bulk Emails</button>
             <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
         </form>
-
     {% endif %}
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
