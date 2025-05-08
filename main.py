@@ -46,7 +46,7 @@ def send_email(recipient_email, subject, body):
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'html'))
 
-        image_base64 = encode_image('A4C Logo.png')
+        image_base64 = encode_image('A4C_Logo.png')
         image_data = base64.b64decode(image_base64)
         image_attachment = MIMEImage(image_data, name="logo.png")
         msg.attach(image_attachment)
@@ -108,7 +108,7 @@ def home():
                 table_html = df.to_html(classes='table table-striped', index=False)
                 paragraphs = []
 
-                image_base64 = encode_image('A4C Logo.png')
+                image_base64 = encode_image('A4C_Logo.png')
 
                 for _, row in df.iterrows():
                     paragraph = (
@@ -145,7 +145,7 @@ def home():
         table_html = df.to_html(classes='table table-striped', index=False)
         paragraphs = []
 
-        image_base64 = encode_image('A4C Logo.png')
+        image_base64 = encode_image('A4C_Logo.png')
 
         for _, row in df.iterrows():
             company_name = row['company name']
@@ -193,7 +193,7 @@ def send_bulk_email():
         df = pd.read_json(data_json)
         selected_template = session.get('selected_template', 'broken_link')
 
-        image_base64 = encode_image('A4C Logo.png')
+        image_base64 = encode_image('A4C_Logo.png')
 
         for _, row in df.iterrows():
             company_name = row['company name']
