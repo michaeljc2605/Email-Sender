@@ -153,28 +153,29 @@ def home():
             if selected_template == 'partnership':
                 paragraph = (
                     f"Hello <b>{company_name}</b>,<br><br>"
-                    f"My name is Michael Joseph Candra, and I represent <b>ApplyforChina</b>. "
-                    f"We are currently looking to expand our collaboration network and I am reaching out to explore potential partnership opportunities with your company.<br><br>"
-                    f"I would love to discuss how we can work together and create mutual benefits. Please let me know if you are interested or available for a brief call.<br><br>"
+                    f"My name is Michael Joseph Candra, and I’m reaching out on behalf of <b>ApplyforChina</b>. I came across your company and was impressed by your online presence and the work you’re doing. "
+                    f"We’re currently expanding our collaboration network and believe there’s a great opportunity for us to support each other’s search visibility. Specifically, we’d love to explore a content exchange—your team could contribute a guest post to our site, and we’d be happy to do the same for yours. "
+                    f"If this sounds of interest, I’d be happy to schedule a brief call to explore how we can create a mutually beneficial partnership."
+                    f"Looking forward to your thoughts.<br><br>"
                     f"Best regards,<br>"
                     f"<i>Michael Joseph Candra</i><br>"
-                    f"<i>ApplyforChina</i><br><br>"
+                    f"<i><a href='https://www.applyforchina.com'>ApplyforChina</a></i><br>"
                     f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
                 )
             else:
                 paragraph = (
                     f"Dear <b>{company_name}</b>,<br><br>"
                     f"I hope this message finds you well.<br><br>"
-                    f"While reviewing your website at \"<a href='{row['page link']}'>{row['page link']}</a>\", we identified a broken hyperlink "
-                    f"currently pointing to \"<a href='{row['broken link']}'>{row['broken link']}</a>\". To enhance user experience and "
-                    f"maintain optimal website performance, we recommend replacing it with an updated resource: "
-                    f"\"<a href='{row['fixed link']}'>{row['fixed link']}</a>\".<br><br>"
-                    f"Should you require any assistance in addressing this issue or implementing the update, our team at "
-                    f"<b>ApplyforChina</b> would be happy to support you. Please feel free to reach out to us for further guidance or collaboration.<br><br>"
+                    f"My name is Michael Joseph Candra, and I’m reaching out on behalf of <b>ApplyforChina</b>. While reviewing your website at <a href='{row['page link']}'>{row['page link']}</a>, we noticed a broken hyperlink that currently points to <a href='{row['broken link']}'>{row['broken link']}</a>.<br><br>"
+                    f"To enhance user experience, maintain your site’s credibility, and support SEO performance, we suggest updating the link to <a href='{row['fixed link']}'>{row['fixed link']}</a>. This is a page we manage and regularly maintain, and it contains updated and relevant information that aligns with the content previously hosted on the broken link.<br><br>"
+                    f"Ensuring all links are functional not only helps reduce bounce rates but also improves user trust and signals content quality to search engines.<br><br>"
+                    f"If needed, our team at <b>ApplyforChina</b> would be happy to assist with the update. We’re also open to discussing possible collaboration opportunities that align with your digital goals.<br><br>"
+                    f"Please feel free to reach out if you have any questions or would like to connect further.<br><br>"
                     f"Best regards,<br>"
                     f"<i>Michael Joseph Candra</i><br>"
-                    f"<i>ApplyforChina</i><br><br>"
+                    f"<i><a href='https://www.applyforchina.com'>ApplyforChina</a></i><br>"
                     f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
+
                 )
             paragraphs.append(paragraph)
 
@@ -203,12 +204,13 @@ def send_bulk_email():
                 subject = f"Exploring Partnership Opportunity with {company_name}"
                 body = (
                     f"Hello <b>{company_name}</b>,<br><br>"
-                    f"My name is Michael Joseph Candra, and I represent <b>ApplyforChina</b>. "
-                    f"We are currently looking to expand our collaboration network and I am reaching out to explore potential partnership opportunities with your company.<br><br>"
-                    f"I would love to discuss how we can work together and create mutual benefits. Please let me know if you are interested or available for a brief call.<br><br>"
+                    f"My name is Michael Joseph Candra, and I’m reaching out on behalf of <b>ApplyforChina</b>.I came across your company and was impressed by your online presence and the work you’re doing."
+                    f"We’re currently expanding our collaboration network and believe there’s a great opportunity for us to support each other’s search visibility.Specifically, we’d love to explore a content exchange—your team could contribute a guest post to our site, and we’d be happy to do the same for yours."
+                    f"If this sounds of interest, I’d be happy to schedule a brief call to explore how we can create a mutually beneficial partnership."
+                    f"Looking forward to your thoughts.<br><br>"
                     f"Best regards,<br>"
                     f"<i>Michael Joseph Candra</i><br>"
-                    f"<i>ApplyforChina</i><br><br>"
+                    f'<i><a href="https://www.applyforchina.com">ApplyforChina</a></i><br>'
                     f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
                 )
             else:
@@ -216,15 +218,14 @@ def send_bulk_email():
                 body = (
                     f"Dear <b>{company_name}</b>,<br><br>"
                     f"I hope this message finds you well.<br><br>"
-                    f"While reviewing your website at \"<a href='{row['page link']}'>{row['page link']}</a>\", we identified a broken hyperlink "
-                    f"currently pointing to \"<a href='{row['broken link']}'>{row['broken link']}</a>\". To enhance user experience and "
-                    f"maintain optimal website performance, we recommend replacing it with an updated resource: "
-                    f"\"<a href='{row['fixed link']}'>{row['fixed link']}</a>\".<br><br>"
-                    f"Should you require any assistance in addressing this issue or implementing the update, our team at "
-                    f"<b>ApplyforChina</b> would be happy to support you. Please feel free to reach out to us for further guidance or collaboration.<br><br>"
+                    f"My name is Michael Joseph Candra, and I’m reaching out on behalf of <b>ApplyforChina</b>. While reviewing your website at <a href='{row['page link']}'>{row['page link']}</a>, we noticed a broken hyperlink that currently points to <a href='{row['broken link']}'>{row['broken link']}</a>.<br><br>"
+                    f"To enhance user experience, maintain your site’s credibility, and support SEO performance, we suggest updating the link to <a href='{row['fixed link']}'>{row['fixed link']}</a>. This is a page we manage and regularly maintain, and it contains updated and relevant information that aligns with the content previously hosted on the broken link.<br><br>"
+                    f"Ensuring all links are functional not only helps reduce bounce rates but also improves user trust and signals content quality to search engines.<br><br>"
+                    f"If needed, our team at <b>ApplyforChina</b> would be happy to assist with the update. We’re also open to discussing possible collaboration opportunities that align with your digital goals.<br><br>"
+                    f"Please feel free to reach out if you have any questions or would like to connect further.<br><br>"
                     f"Best regards,<br>"
                     f"<i>Michael Joseph Candra</i><br>"
-                    f"<i>ApplyforChina</i><br><br>"
+                    f"<i><a href='https://www.applyforchina.com'>ApplyforChina</a></i><br>"
                     f"<img src='data:image/png;base64,{image_base64}' alt='Logo' style='max-width: 200px;'><br><br>"
                 )
 
