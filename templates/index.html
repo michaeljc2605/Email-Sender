@@ -1,50 +1,876 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Bulk Email Sender</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApplyForChina – Bulk Email Sender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --red:      #C8102E;
+            --red-dark: #9e0d22;
+            --navy:     #0D1B2A;
+            --navy-mid: #1a2e42;
+            --gold:     #D4A843;
+            --white:    #FFFFFF;
+            --offwhite: #F7F5F0;
+            --border:   #e2ddd6;
+            --text:     #2c2c2c;
+            --muted:    #7a7a7a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--offwhite);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── NAV ── */
+        nav.topbar {
+            background: var(--navy);
+            padding: 18px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--red);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav.topbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+
+        nav.topbar .brand-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            color: var(--white);
+            letter-spacing: 0.02em;
+        }
+
+        nav.topbar .brand-text span { color: var(--red); }
+
+        nav.topbar .nav-badge {
+            background: var(--red);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 2px;
+        }
+
+        /* ── HOW TO USE BANNER ── */
+        .howto-banner {
+            background: linear-gradient(135deg, #0f2235 0%, #1a3a55 100%);
+            border-bottom: 1px solid rgba(200,16,46,0.3);
+            padding: 28px 48px;
+        }
+
+        .howto-inner { max-width: 960px; margin: 0 auto; }
+
+        .howto-title {
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .howto-steps { display: flex; gap: 0; flex-wrap: wrap; }
+
+        .howto-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex: 1;
+            min-width: 180px;
+            padding: 0 24px 0 0;
+            position: relative;
+        }
+
+        .howto-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: 6px;
+            top: 2px;
+            color: var(--red);
+            font-size: 0.9rem;
+        }
+
+        .howto-step .step-num {
+            width: 22px;
+            height: 22px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .howto-step .step-text { font-size: 0.82rem; color: rgba(255,255,255,0.72); line-height: 1.4; }
+        .howto-step .step-text strong { color: white; display: block; margin-bottom: 2px; }
+
+        .howto-notice {
+            margin-top: 18px;
+            padding: 12px 16px;
+            background: rgba(212,168,67,0.1);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 4px 4px 0;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.7;
+        }
+
+        .howto-notice a { color: var(--gold); text-decoration: underline; }
+
+        .btn-download-template {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 7px 16px;
+            background: var(--navy);
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 3px;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            border: 1px solid var(--gold);
+        }
+
+
+
+        /* ── HERO ── */
+        .hero-strip {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1f3a55 100%);
+            padding: 48px 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-strip::before {
+            content: '中';
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14rem;
+            color: rgba(200,16,46,0.08);
+            font-family: serif;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .hero-strip h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--white);
+            font-weight: 700;
+            line-height: 1.2;
+            max-width: 560px;
+        }
+
+        .hero-strip h1 em { color: var(--red); font-style: normal; }
+
+        .hero-strip p {
+            color: rgba(255,255,255,0.62);
+            margin-top: 10px;
+            font-size: 0.98rem;
+            max-width: 480px;
+            font-weight: 300;
+        }
+
+        .hero-divider { width: 48px; height: 3px; background: var(--red); margin: 16px 0; }
+
+        .section-eyebrow {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 6px;
+        }
+
+        /* ── MAIN ── */
+        .main-wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        /* ── FLASH ── */
+        .flash-list { margin-bottom: 28px; }
+
+        .flash-msg {
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            border-left: 4px solid transparent;
+        }
+
+        .flash-msg.success { background: #edfaf1; border-color: #2ecc71; color: #1a6e3c; }
+        .flash-msg.error   { background: #fdf2f2; border-color: var(--red); color: var(--red-dark); }
+        .flash-msg.info    { background: #eef4ff; border-color: #3b82f6; color: #1e3a8a; }
+
+        /* ── CARD ── */
+        .card-custom {
+            background: var(--white);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 20px rgba(13,27,42,0.07);
+            overflow: hidden;
+            margin-bottom: 32px;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .card-custom:nth-child(2) { animation-delay: 0.08s; }
+        .card-custom:nth-child(3) { animation-delay: 0.16s; }
+
+        .card-header-custom {
+            background: var(--navy);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header-custom h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .card-header-custom .step-dot {
+            width: 26px;
+            height: 26px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .card-body-custom { padding: 32px 28px; }
+
+        /* ── FORM ── */
+        label.form-label-custom {
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--offwhite);
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"]:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+            outline: none;
+        }
+
+        .file-note { font-size: 0.8rem; color: var(--muted); margin-top: -14px; margin-bottom: 20px; }
+
+        /* ── BUTTONS ── */
+        .btn-primary-custom {
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 13px 32px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            text-decoration: none;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .btn-primary-custom:hover { background: var(--red-dark); color: white; transform: translateY(-1px); }
+
+        .btn-ghost-custom {
+            background: transparent;
+            color: var(--muted);
+            border: 1.5px solid var(--border);
+            padding: 11px 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-ghost-custom:hover { border-color: var(--red); color: var(--red); }
+
+        /* ── TEMPLATE SWITCHER ── */
+        .template-switcher {
+            display: flex;
+            border: 2px solid var(--navy);
+            border-radius: 4px;
+            overflow: hidden;
+            width: fit-content;
+            margin-bottom: 28px;
+        }
+
+        .template-btn {
+            padding: 10px 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--navy);
+            background: white;
+            transition: all 0.18s;
+            border: none;
+        }
+
+        .template-btn:hover { background: var(--offwhite); color: var(--navy); }
+        .template-btn.active { background: var(--navy); color: white; }
+        .template-btn:not(:last-child) { border-right: 2px solid var(--navy); }
+
+        /* ── TABLE ── */
+        .table-wrap { overflow-x: auto; border-radius: 4px; border: 1px solid var(--border); }
+
+        table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+
+        table.data-table thead th {
+            background: var(--navy);
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+
+        table.data-table tbody tr:nth-child(even) { background: var(--offwhite); }
+
+        table.data-table tbody td {
+            padding: 11px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        table.data-table tbody tr:last-child td { border-bottom: none; }
+
+        /* ── PREVIEWS ── */
+        .preview-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--navy);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .preview-count {
+            font-size: 0.82rem;
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        .email-preview-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            transition: box-shadow 0.2s;
+        }
+
+        .email-preview-card:hover { box-shadow: 0 4px 18px rgba(13,27,42,0.1); }
+
+        .email-preview-header {
+            background: var(--offwhite);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .email-preview-header .preview-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--navy);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .email-preview-header .chevron {
+            font-size: 0.75rem;
+            color: var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .email-preview-header.collapsed .chevron { transform: rotate(-90deg); }
+
+        /* ── EDITABLE BODY ── */
+        .email-preview-body { padding: 0; }
+
+        .edit-toolbar {
+            background: #f0f4f8;
+            border-bottom: 1px solid var(--border);
+            padding: 6px 14px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .edit-toolbar button {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 3px 9px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--navy);
+            transition: all 0.15s;
+        }
+
+        .edit-toolbar button:hover { background: var(--navy); color: white; border-color: var(--navy); }
+
+        .toolbar-sep { width: 1px; background: var(--border); height: 18px; margin: 0 4px; }
+
+        .editable-content {
+            padding: 22px 24px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text);
+            min-height: 80px;
+            outline: none;
+        }
+
+        .editable-content:focus {
+            background: #fffdf9;
+            box-shadow: inset 0 0 0 2px rgba(200,16,46,0.15);
+        }
+
+        .edit-hint {
+            padding: 6px 16px 8px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: #fafafa;
+            border-top: 1px solid var(--border);
+            font-style: italic;
+        }
+
+        /* ── ACTION BAR ── */
+        .action-bar {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(13,27,42,0.06);
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .action-bar-info { font-size: 0.88rem; color: var(--muted); }
+        .action-bar-info strong { color: var(--navy); }
+
+        /* ── INLINE SEND FORM ── */
+        .send-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .send-password-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .send-password-input {
+            padding: 11px 40px 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            width: 200px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--offwhite);
+            color: var(--text);
+        }
+
+        .send-password-input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+            background: white;
+        }
+
+        .send-password-input::placeholder { color: var(--muted); font-size: 0.85rem; }
+
+        .send-password-toggle {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 0.85rem;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+
+        .send-password-toggle:hover { color: var(--navy); }
+
+        .send-error {
+            font-size: 0.78rem;
+            color: var(--red);
+            width: 100%;
+            margin-top: -6px;
+            display: none;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--navy);
+            color: rgba(255,255,255,0.45);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.82rem;
+            border-top: 3px solid var(--red);
+        }
+
+        footer a { color: var(--red); text-decoration: none; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+            nav.topbar { padding: 16px 20px; }
+            .hero-strip, .howto-banner { padding: 32px 20px; }
+            .hero-strip h1 { font-size: 1.8rem; }
+            .main-wrap { padding: 28px 16px 60px; }
+            .card-body-custom { padding: 22px 16px; }
+            .howto-steps { flex-direction: column; gap: 14px; }
+            .howto-step::after { display: none; }
+            .send-password-input { width: 100%; }
+            .send-form { flex-direction: column; align-items: stretch; }
+            .action-bar { flex-direction: column; align-items: stretch; }
+        }
+    </style>
 </head>
-<body class="container mt-5">
-    <h1>Upload Excel File</h1>
+<body>
+
+<!-- NAV -->
+<nav class="topbar">
+    <a href="/" class="brand">
+        <div style="background:var(--red);width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;">
+            <span style="color:white;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;">A</span>
+        </div>
+        <span class="brand-text">Apply<span>For</span>China</span>
+    </a>
+    <span class="nav-badge">Internal Tool</span>
+</nav>
+
+<!-- HOW TO USE BANNER -->
+<div class="howto-banner">
+    <div class="howto-inner">
+        <div class="howto-title">📋 How to Use This Tool</div>
+        <div class="howto-steps">
+            <div class="howto-step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                    <strong>Upload File</strong>
+                    Prepare your .xlsx, .csv, or .txt with the required columns
+                </div>
+            </div>
+            <div class="howto-step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                    <strong>Choose Template</strong>
+                    Pick Broken Link or Partnership outreach style
+                </div>
+            </div>
+            <div class="howto-step">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                    <strong>Edit Previews</strong>
+                    Click any recipient card to expand and edit freely
+                </div>
+            </div>
+            <div class="howto-step">
+                <div class="step-num">4</div>
+                <div class="step-text">
+                    <strong>Send</strong>
+                    Enter the password next to the Send button and confirm
+                </div>
+            </div>
+        </div>
+        <div class="howto-notice">
+            ⚠️ <strong style="color:rgba(255,255,255,0.9);">Just browsing?</strong>
+            You can preview and edit emails here freely — but <em>sending</em> requires SMTP credentials on the server.
+            Want to run this yourself? <a href="https://github.com" target="_blank">Download the repo on GitHub</a>
+            and follow the <strong style="color:var(--gold);">README.md</strong> to set up your own instance.
+            <br>
+            <a href="{{ url_for('static', filename='template/dummy-brokenLink.xlsx') }}" download class="btn-download-template">
+                ⬇ Download Contact Template (.xlsx)
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- HERO -->
+<div class="hero-strip">
+    <div class="section-eyebrow">Outreach Automation</div>
+    <h1>Bulk Email <em>Sender</em></h1>
+    <div class="hero-divider"></div>
+    <p>Upload your contact list and send personalized outreach emails — broken link notifications or partnership proposals.</p>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        {% for category, message in messages %}
-          <div class="notification {{ category }}">{{ message }}</div>
-        {% endfor %}
+        <div class="flash-list">
+          {% for category, message in messages %}
+            <div class="flash-msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
       {% endif %}
     {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data" class="p-4 shadow rounded bg-white" style="max-width: 600px">
-        <div class="mb-3">
-            <label for="password" class="form-label">Enter Password:</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+    <!-- STEP 1: UPLOAD — no password needed here -->
+    <div class="card-custom">
+        <div class="card-header-custom">
+            <div class="step-dot">1</div>
+            <h2>Upload Contact File</h2>
         </div>
-        <div class="mb-3">
-            <input type="file" name="file" class="form-control" required>
+        <div class="card-body-custom">
+            <form method="POST" enctype="multipart/form-data">
+                <label class="form-label-custom">Contact File</label>
+                <input type="file" name="file" accept=".xlsx,.xls,.csv,.txt" required>
+                <p class="file-note">Accepts .xlsx, .xls, .csv, .txt (comma-separated)</p>
+                <button type="submit" class="btn-primary-custom">Upload &amp; Preview →</button>
+            </form>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Upload Excel</button>
-    </form>
-    <!--hidden form -->
-    <form id="clearSessionForm" action="{{ url_for('clear_session') }}" method="POST" style="display: none;"></form>
-    {% if table_html %}
-        <h2 class="mt-5">Uploaded Data</h2>
-        <div>{{ table_html|safe }}</div>
-
-    <div class="mb-4">
-        <h5>Select Email Template:</h5>
-        <a href="{{ url_for('home', template='broken_link') }}" class="btn btn-outline-primary {% if selected_template == 'broken_link' %}active{% endif %}">Broken Link</a>
-        <a href="{{ url_for('home', template='partnership') }}" class="btn btn-outline-secondary {% if selected_template == 'partnership' %}active{% endif %}">Partnership</a>
     </div>
-        <h2 class="mt-4">Email Previews</h2>
-        {% for paragraph in paragraphs %}
-            <div class="border p-3 mb-3">{{ paragraph|safe }}</div>
-        {% endfor %}
 
-        <form action="/send_email" method="post">
-            <button type="submit" class="btn btn-primary">Send Bulk Emails</button>
-            <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
-        </form>
+    <form id="clearSessionForm" action="{{ url_for('clear_session') }}" method="POST" style="display:none;"></form>
+
+    {% if table_html %}
+
+    <!-- STEP 2: DATA TABLE -->
+    <div class="card-custom">
+        <div class="card-header-custom">
+            <div class="step-dot">2</div>
+            <h2>Contact Data</h2>
+        </div>
+        <div class="card-body-custom" style="padding-bottom:0;">
+            <div class="table-wrap">
+                {{ table_html | safe }}
+            </div>
+        </div>
+        <div style="padding:16px 28px;border-top:1px solid var(--border);background:var(--offwhite);">
+            <p style="font-size:0.82rem;color:var(--muted);margin:0;">Review your data before choosing a template and sending.</p>
+        </div>
+    </div>
+
+    <!-- STEP 3: TEMPLATE & EDITABLE PREVIEWS -->
+    <div class="card-custom">
+        <div class="card-header-custom">
+            <div class="step-dot">3</div>
+            <h2>Choose Template &amp; Edit Previews</h2>
+        </div>
+        <div class="card-body-custom">
+
+            <label class="form-label-custom" style="margin-bottom:12px;">Email Template</label>
+            <div class="template-switcher">
+                <a href="{{ url_for('home', template='broken_link') }}"
+                   class="template-btn {% if selected_template == 'broken_link' %}active{% endif %}">
+                    🔗 Broken Link
+                </a>
+                <a href="{{ url_for('home', template='partnership') }}"
+                   class="template-btn {% if selected_template == 'partnership' %}active{% endif %}">
+                    🤝 Partnership
+                </a>
+            </div>
+
+            <div class="preview-section-title">
+                Email Previews
+                <span class="preview-count">{{ paragraphs|length }} recipient(s) · click to expand &amp; edit</span>
+            </div>
+
+            {% for paragraph in paragraphs %}
+            <div class="email-preview-card">
+                <div class="email-preview-header collapsed" onclick="togglePreview(this)">
+                    <span class="preview-label">Recipient {{ loop.index }}</span>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span style="font-size:0.75rem;color:var(--muted);">{{ selected_template | replace('_',' ') | title }}</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                </div>
+                <div class="email-preview-body" style="display:none;">
+                    <div class="edit-toolbar">
+                        <button onmousedown="event.preventDefault(); fmt('bold')"><b>B</b></button>
+                        <button onmousedown="event.preventDefault(); fmt('italic')"><i>I</i></button>
+                        <button onmousedown="event.preventDefault(); fmt('underline')"><u>U</u></button>
+                        <div class="toolbar-sep"></div>
+                        <button onmousedown="event.preventDefault(); resetContent(this)">↺ Reset</button>
+                    </div>
+                    <div class="editable-content"
+                         contenteditable="true"
+                         data-original="{{ paragraph | e }}">{{ paragraph | safe }}</div>
+                    <div class="edit-hint">✏️ Click the text above to edit this email before sending</div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <!-- ACTION BAR — password inline next to send button -->
+    <div class="action-bar">
+        <div class="action-bar-info">
+            <strong>{{ paragraphs|length }} email(s)</strong> ready ·
+            Template: <strong>{{ selected_template | replace('_',' ') | title }}</strong>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button type="button" id="resetButton" class="btn-ghost-custom">↺ Reset</button>
+
+            <form id="sendForm" action="/send_email" method="post" class="send-form" onsubmit="return validateSend()">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div class="send-password-wrap">
+                        <input type="password"
+                               id="sendPassword"
+                               name="modal_password"
+                               class="send-password-input"
+                               placeholder="Enter password"
+                               autocomplete="current-password">
+                        <button type="button" class="send-password-toggle" onclick="togglePasswordVisibility()" title="Show/hide password">👁</button>
+                    </div>
+                    <span class="send-error" id="sendError">Please enter the password before sending.</span>
+                </div>
+                <button type="submit" class="btn-primary-custom">Send All Emails →</button>
+            </form>
+        </div>
+    </div>
+
     {% endif %}
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <p>ApplyForChina Internal Tool &nbsp;·&nbsp; <a href="https://www.applyforchina.com" target="_blank">applyforchina.com</a></p>
+</footer>
+
+<script>
+    // ── TABLE STYLING ──
+    document.querySelectorAll('.table').forEach(t => {
+        t.classList.remove('table', 'table-striped');
+        t.classList.add('data-table');
+    });
+
+    // ── TOGGLE PREVIEW ──
+    function togglePreview(header) {
+        const body = header.nextElementSibling;
+        const isOpen = body.style.display !== 'none';
+        body.style.display = isOpen ? 'none' : 'block';
+        header.classList.toggle('collapsed', isOpen);
+    }
+
+    // ── RICH TEXT FORMAT ──
+    function fmt(cmd) {
+        document.execCommand(cmd, false, null);
+    }
+
+    // ── RESET INDIVIDUAL PREVIEW ──
+    function resetContent(btn) {
+        const editable = btn.closest('.email-preview-body').querySelector('.editable-content');
+        editable.innerHTML = editable.dataset.original;
+    }
+
+    // ── TOGGLE PASSWORD VISIBILITY ──
+    function togglePasswordVisibility() {
+        const input = document.getElementById('sendPassword');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // ── VALIDATE BEFORE SEND ──
+    function validateSend() {
+        const pw = document.getElementById('sendPassword').value.trim();
+        const err = document.getElementById('sendError');
+        if (!pw) {
+            err.style.display = 'block';
+            document.getElementById('sendPassword').focus();
+            return false;
+        }
+        err.style.display = 'none';
+        return true;
+    }
+
+    // Hide error as user types
+    document.getElementById('sendPassword') && document.getElementById('sendPassword').addEventListener('input', function() {
+        document.getElementById('sendError').style.display = 'none';
+    });
+
+    // ── RESET SESSION ──
+    const resetButton = document.getElementById('resetButton');
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            document.getElementById('clearSessionForm').submit();
+        });
+    }
+</script>
+
 </body>
 </html>
