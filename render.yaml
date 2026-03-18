@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: email-sender
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: SENDER_EMAIL
+        sync: false
+      - key: SENDER_PASSWORD
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        sync: false
